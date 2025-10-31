@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project What Runs Us</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zalando+Sans+Expanded:ital,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">
+    
+</head>
+<style>
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --pastel-green: #93bea3;
+            --light-green: #8cb98c;
+            --dark-green: #3f6b58;
+            --forest-green: #5a8c7a;
+            --white: #ffffff;
+            --shadow: rgba(0, 0, 0, 0.08);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: var(--white);
+            color: #333;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        /* Enhanced Custom Cursor with Multiple Trees */
+        .cursor {
+            position: fixed;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background-color: var(--forest-green);
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: difference;
+            transition: transform 0.15s, width 0.3s, height 0.3s;
+        }
+
+        .cursor-follower {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1.5px solid var(--pastel-green);
+            pointer-events: none;
+            z-index: 9998;
+            transition: transform 0.5s, width 0.5s, height 0.5s;
+            opacity: 0.4;
+        }
+
+        .tree-follower {
+            position: fixed;
+            width: 24px;
+            height: 32px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%237eb09b" d="M12 2L4 22h16L12 2zm0 5l6 15H6l6-15z"/></svg>');
+            background-repeat: no-repeat;
+            pointer-events: none;
+            z-index: 9997;
+            transition: transform 0.7s, opacity 0.5s;
+            opacity: 0.6;
+        }
+
+        .tree-follower-2 {
+            position: fixed;
+            width: 20px;
+            height: 28px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23b8e0c7" d="M12 2L4 22h16L12 2zm0 5l6 15H6l6-15z"/></svg>');
+            background-repeat: no-repeat;
+            pointer-events: none;
+            z-index: 9996;
+            transition: transform 0.9s, opacity 0.5s;
+            opacity: 0.5;
+        }
+
+        .tree-follower-3 {
+            position: fixed;
+            width: 18px;
+            height: 26px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23d4f1d4" d="M12 2L4 22h16L12 2zm0 5l6 15H6l6-15z"/></svg>');
+            background-repeat: no-repeat;
+            pointer-events: none;
+            z-index: 9995;
+            transition: transform 1.1s, opacity 0.5s;
+            opacity: 0.4;
+        }
+
+        /* Blurred Navigation */
+        .navbar {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 1000px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 30px;
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(0.1px);
+            border-radius: 50px;
+            box-shadow: 0 8px 32px var(--shadow);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            top: 10px;
+            padding: 12px 25px;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--dark-green);
+            text-decoration: none;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 600;
+            transition: color 0.3s;
+            position: relative;
+            font-size: 0.95rem;
+        }
+
+        .nav-links a:hover {
+            color: var(--dark-green);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--dark-green);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-report {
+            background-color: var(--dark-green);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .nav-report:hover {
+            background-color: var(--dark-green);
+            color: white;
+        }
+
+        .nav-report::after {
+            display: none;
+        }
+
+        /* Homepage with Video */
+        .homepage {
+            height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .video-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.1), rgba(255,255,255,0.3));
+            z-index: -1;
+        }
+
+        .home-content {
+            text-align: center;
+            color: #ffffff;
+            max-width: 800px;
+            padding: 0 20px;
+            z-index: 1;
+            
+        }
+
+        .home-content h1 {
+            font-size: 4.5rem;
+            margin-bottom: 24px;
+            font-weight: 700;
+            line-height: 1.1;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .home-content p {
+            font-size: 1.3rem;
+            margin-bottom: 36px;
+            line-height: 1.6;
+            font-weight: 400;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 14px 32px;
+            background-color: var(--dark-green);
+            color: #333;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            box-shadow: 0 4px 15px var(--shadow);
+        }
+
+        .btn:hover {
+            background-color: var(--dark-green);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px var(--shadow);
+        }
+
+        .btn-report {
+            background-color: rgba(255, 255, 255, 0.85);
+            margin-left: 15px;
+        }
+
+        /* Sections */
+        .section {
+            padding: 1px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .section-content {
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .section h2 {
+            font-size: 3.2rem;
+            margin-bottom: 1px;
+            text-align: center;
+            color: var(--dark-green);
+        }
+
+        .section p {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin-bottom: 1px;
+            text-align: center;
+            font-weight: 400;
+        }
+
+        
+
+        .about-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--dark-green);
+            padding-top: 0.000001%;
+            padding-bottom: 1%;
+        }
+
+        .about-content {
+            display: flex;
+            gap: 50px;
+            margin-top: 50px;
+            align-items: center;
+            color: var(--dark-green);
+        }
+
+        .about-text {
+            flex: 1;
+            padding: 20px;
+        }
+
+        .about-image {
+            flex: 1;
+            height: 400px;
+            background: var(--white);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--dark-green);
+            font-size: 1.2rem;
+            box-shadow: 0 10px 30px var(--shadow);
+        }
+
+        /* Change Section */
+#change {
+    background-color: var(--white);
+    padding-bottom: 25px;
+    padding-top: 0;
+    margin-top: 10px;
+}
+
+.change-container {
+    text-align: center;
+    padding-top: 0;
+}
+
+.change-text {
+    font-size: 5.5rem;
+    font-weight: 700;
+    color: var(--dark-green);
+    margin-bottom: 10;
+    line-height: 1.1;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* Contact Section */
+#contact {
+    background-color: var(--white);
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.contact-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 0;
+}
+
+.contact-info {
+    display: flex;
+    gap: 2rem; /* Adjust this value for spacing between contact items */
+    margin-top: 1rem; /* Adjust this value for top margin */
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.contact-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 200px;
+}
+
+.contact-icon {
+    font-size: 2.5rem;
+    color: var(--dark-green);
+    margin-bottom: 0.5rem; /* Adjust this value for spacing below icon */
+}
+        /* Footer */
+        footer {
+            background-color: var(--dark-green);
+            color: white;
+            padding: 60px 20px 20px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 40px;
+        }
+
+        .footer-column {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .footer-column h3 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background-color: var(--pastel-green);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .social-links a:hover {
+            background-color: var(--pastel-green);
+            color: var(--dark-green);
+            transform: translateY(-3px);
+        }
+
+        .spotify-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            width: fit-content;
+        }
+
+        .spotify-link:hover {
+            background-color: #1DB954;
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Animations */
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .floating {
+            animation: float 5s ease-in-out infinite;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 968px) {
+            .navbar {
+                padding: 14px 20px;
+                width: 95%;
+            }
+
+            .nav-links {
+                gap: 15px;
+            }
+
+            .home-content h1 {
+                font-size: 3.2rem;
+            }
+
+            .home-content p {
+                font-size: 1.1rem;
+            }
+
+            .section h2 {
+                font-size: 2.5rem;
+            }
+
+            .change-text {
+                font-size: 3.5rem;
+            }
+
+            .impact-item, .impact-item.reverse {
+                flex-direction: column;
+            }
+
+            .about-content {
+                flex-direction: column;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                gap: 30px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .home-content h1 {
+                font-size: 2.5rem;
+            }
+
+            .change-text {
+                font-size: 2.8rem;
+            }
+        }
+        .project {
+            color: var(--dark-green);
+            font-weight: 900;
+        }
+    </style>
+
+<body>
+    <!-- Enhanced Custom Cursor Elements -->
+    <div class="cursor"></div>
+    <div class="cursor-follower"></div>
+    <div class="tree-follower"></div>
+    <div class="tree-follower-2"></div>
+    <div class="tree-follower-3"></div>
+
+    <!-- Blurred Navigation -->
+    <nav class="navbar">
+        <a href="#" class="logo">Project What Runs Us</a>
+        <div class="nav-links">
+            <a href="Index.html">Home</a>
+            <a href="volunteer.html">Volunteer</a>
+            <a href="report.html" class="nav-report">Report</a>
+        </div>
+    </nav>
+
+    <!-- Homepage Section -->
+    <section id="home" class="homepage">
+        <video autoplay muted loop class="video-background">
+            <source src="10481977-hd_1920_1080_30fps.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="video-overlay"></div>
+        <div class="home-content">
+            <h1 class="floating"><br class=project>Project<br> What Runs Us</h1>
+            <p>Join our movement to protect and preserve our planet's precious ecosystems for generations to come.</p>
+            <div>
+                <a href="report.html" class="btn btn-report">Report Issue</a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- About Section -->
+    <section id="about" class="section">
+        <div class="section-content">
+            <div class="about-container">
+                <h2>About Project What Runs Us</h2>
+                <p>Learn about our mission, vision, and the dedicated team behind our environmental initiatives.</p>
+                
+                <div class="about-content">
+                    <div class="about-text">
+                        <p>Project What Runs Us was founded in 2025 with a simple yet powerful mission: to protect and restore the world's ecosystems through community-driven conservation efforts.</p>
+                        <p>We believe the coexistence between humanity and nature is possible and essential for our collective future. Our approach combines scientific research, community empowerment, and practical conservation strategies.</p>
+    
+                    </div>
+                    <div class="about-image">
+                        <img class = "about-image" src="Science_deforestation_cop26_GettyImages-1236332297.webp" alt="About Image">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Change Section -->
+    <section id="change" class="section">
+        <div class="section-content">
+            <div class="change-container">
+                <h2 class="change-text">Make Change Now</h2>
+                <p>Every small action contributes to a larger impact. Join us in creating a sustainable future where nature and humanity thrive together.</p>
+                <a href="volunteer.html" class="btn">Get Involved</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section">
+        <div class="section-content">
+            <div class="contact-container">
+                <h2>Contact Us</h2>
+                <p>Have questions or want to collaborate? Reach out to us through any of these channels.</p>
+                
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <i class="fas fa-envelope contact-icon"></i>
+                        <h3>Email</h3>
+                        <p>Rutviij.Casula21@gmail.com</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-column">
+                <h3>Project What Runs Us</h3>
+                <p>Dedicated to preserving our planet's ecosystem for a greener future.</p>
+                <div class="social-links">
+                    <a href="https://www.instagram.com/project_what_runs_us/"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+                <a href="https://open.spotify.com/show/7JkzOChBARbsUWvYDGsbQH?si=4b7c1f4bf0df4800" class="spotify-link" target="_blank">
+                    <i class="fab fa-spotify"></i>
+                    Follow us on Spotify
+                </a>
+            </div>
+            <div class="footer-column">
+                <h3>Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="Index.html">Home</a></li>
+                    <li><a href="volunteer.html">Volunteer</a></li>
+                    <li><a href="report.html">Report</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Our Initiatives</h3>
+                <ul class="footer-links">
+                    <li><a href="#">Reforestation Projects</a></li>
+                    <li><a href="#">Sustainable Agriculture</a></li>
+                    <li><a href="#">Wildlife Protection</a></li>
+                    <li><a href="#">Eco Education</a></li>
+                    <li><a href="#">Community Outreach</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2025 Project What Runs Us. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Enhanced Custom cursor with multiple tree followers
+        document.addEventListener('DOMContentLoaded', function() {
+            const cursor = document.querySelector('.cursor');
+            const cursorFollower = document.querySelector('.cursor-follower');
+            const treeFollower = document.querySelector('.tree-follower');
+            const treeFollower2 = document.querySelector('.tree-follower-2');
+            const treeFollower3 = document.querySelector('.tree-follower-3');
+            
+            let mouseX = 0, mouseY = 0;
+            let followerX = 0, followerY = 0;
+            let tree1X = 0, tree1Y = 0;
+            let tree2X = 0, tree2Y = 0;
+            let tree3X = 0, tree3Y = 0;
+            
+            // Smooth follower animation
+            function animate() {
+                // Move cursor follower with easing
+                followerX += (mouseX - followerX) * 0.1;
+                followerY += (mouseY - followerY) * 0.1;
+                
+                // Move trees with different easing values for natural movement
+                tree1X += (mouseX - 15 - tree1X) * 0.05;
+                tree1Y += (mouseY + 10 - tree1Y) * 0.05;
+                
+                tree2X += (mouseX + 20 - tree2X) * 0.07;
+                tree2Y += (mouseY - 15 - tree2Y) * 0.07;
+                
+                tree3X += (mouseX - 25 - tree3X) * 0.09;
+                tree3Y += (mouseY - 20 - tree3Y) * 0.09;
+                
+                // Apply positions
+                cursorFollower.style.left = followerX + 'px';
+                cursorFollower.style.top = followerY + 'px';
+                
+                treeFollower.style.left = tree1X + 'px';
+                treeFollower.style.top = tree1Y + 'px';
+                
+                treeFollower2.style.left = tree2X + 'px';
+                treeFollower2.style.top = tree2Y + 'px';
+                
+                treeFollower3.style.left = tree3X + 'px';
+                treeFollower3.style.top = tree3Y + 'px';
+                
+                requestAnimationFrame(animate);
+            }
+            
+            animate();
+            
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                
+                cursor.style.left = e.clientX + 'px';
+                cursor.style.top = e.clientY + 'px';
+            });
+            
+            // Enhanced interactive cursor effects
+            document.querySelectorAll('a, button, .volunteer-card').forEach(element => {
+                element.addEventListener('mouseenter', () => {
+                    cursor.style.transform = 'scale(1.8)';
+                    cursor.style.backgroundColor = 'var(--forest-green)';
+                    cursorFollower.style.transform = 'scale(1.4)';
+                    cursorFollower.style.borderColor = 'var(--forest-green)';
+                    
+                    // Make trees more visible on hover
+                    treeFollower.style.opacity = '0.8';
+                    treeFollower2.style.opacity = '0.7';
+                    treeFollower3.style.opacity = '0.6';
+                });
+                
+                element.addEventListener('mouseleave', () => {
+                    cursor.style.transform = 'scale(1)';
+                    cursor.style.backgroundColor = 'var(--forest-green)';
+                    cursorFollower.style.transform = 'scale(1)';
+                    cursorFollower.style.borderColor = 'var(--pastel-green)';
+                    
+                    // Return trees to normal opacity
+                    treeFollower.style.opacity = '0.6';
+                    treeFollower2.style.opacity = '0.5';
+                    treeFollower3.style.opacity = '0.4';
+                });
+            });
+            
+            // Navbar scroll effect
+            window.addEventListener('scroll', () => {
+                const navbar = document.querySelector('.navbar');
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+                
+                // Scroll animation for impact items
+                const impactItems = document.querySelectorAll('.impact-item');
+                impactItems.forEach(item => {
+                    const itemTop = item.getBoundingClientRect().top;
+                    const windowHeight = window.innerHeight;
+                    
+                    if (itemTop < windowHeight * 0.85) {
+                        item.classList.add('visible');
+                    }
+                });
+            });
+            
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+            
+            // Report button functionality
+            document.querySelectorAll('.btn-report, .nav-report').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    alert('Thank you for your concern. Our team will review your report promptly.');
+                });
+            });
+            
+            // Initialize impact items to be hidden initially
+            document.querySelectorAll('.impact-item').forEach(item => {
+                item.classList.remove('visible');
+            });
+        });
+    </script>
+</body>
+</html>
